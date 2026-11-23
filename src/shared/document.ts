@@ -17,6 +17,7 @@ export function newDocument(puzzle: Puzzle): GameDocument {
     activeId: puzzle.id,
     sessions: { [puzzle.id]: newSession(puzzle) },
     records: [],
+    routes: {},
   };
 }
 export function completion(session: Session): number {

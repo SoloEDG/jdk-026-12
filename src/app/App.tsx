@@ -5,6 +5,7 @@ import {
   Leaf,
   ArrowUpRight,
   CheckCircle2,
+  Compass,
   X,
 } from "lucide-react";
 import { CatalogPanel, puzzles } from "../features/catalog";
@@ -12,10 +13,11 @@ import { BoardPanel } from "../features/board";
 import { AssistPanel } from "../features/assist";
 import { JournalPanel } from "../features/journal";
 import { GalleryPanel } from "../features/gallery";
+import { StoryPanel } from "../features/story";
 import { useGame } from "./useGame";
 export function App() {
   const game = useGame();
-  const [page, setPage] = useState<"play" | "gallery">("play");
+  const [page, setPage] = useState<"play" | "story" | "gallery">("play");
   const [resetting, setResetting] = useState(false);
   const open = (id: string) => {
     game.dispatch({ type: "open", id });
@@ -35,6 +37,14 @@ export function App() {
         >
           <Grid2X2 size={21} />
           <span>解谜</span>
+        </button>
+        <button
+          className={page === "story" ? "active" : ""}
+          onClick={() => setPage("story")}
+          aria-label="故事路线"
+        >
+          <Compass size={21} />
+          <span>探险</span>
         </button>
         <button
           className={page === "gallery" ? "active" : ""}
@@ -67,7 +77,9 @@ export function App() {
               <h2>
                 {page === "play"
                   ? "在数字之间，发现图案。"
-                  : "让每一次发现，都有归处。"}
+                  : page === "story"
+                    ? "把散落的发现，走成一段旅程。"
+                    : "让每一次发现，都有归处。"}
               </h2>
             </div>
             <div className="intro-note">
@@ -133,6 +145,15 @@ export function App() {
                 </button>
               </div>
             </>
+          ) : page === "story" ? (
+            <StoryPanel
+              document={game.document}
+              puzzles={puzzles}
+              notice={game.routeNotice}
+              onRoute={game.route}
+              onOpen={open}
+              onGallery={() => setPage("gallery")}
+            />
           ) : (
             <GalleryPanel
               document={game.document}

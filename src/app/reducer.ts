@@ -3,11 +3,21 @@ import { isSolved, newSession } from "../shared/document";
 import { applyMark, undoMark } from "../features/board";
 import { HINT_LIMIT } from "../features/assist";
 import { registerSolve } from "../features/journal";
+import { mergeRoutes } from "../features/story/model/progress";
 export function transition(
   document: GameDocument,
   action: GameAction,
   puzzles: Puzzle[],
 ): GameDocument {
+  if (action.type === "commitRoutes")
+    return {
+      ...document,
+      routes: { ...document.routes, [action.routeId]: action.progress },
+    };
+  if (action.type === "syncRoutes") {
+    const routes = mergeRoutes(document.routes, action.routes);
+    return routes === document.routes ? document : { ...document, routes };
+  }
   const puzzle = puzzles.find((p) => p.id === document.activeId)!;
   const current = document.sessions[puzzle.id];
   if (action.type === "open") {
